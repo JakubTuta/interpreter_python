@@ -1,4 +1,1 @@
-import parser
-
-import evaluator
-import lexer
+from . import evaluator, lexer, parser
