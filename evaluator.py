@@ -1,17 +1,13 @@
-import parser
-
-
-class EvaluatorError(Exception):
-    pass
+import models
 
 
 class Evaluator:
-    def evaluate(self, expression: parser.Expr):
+    def evaluate(self, expression: models.parser.Expr):
         match expression:
-            case parser.Literal(row, col, value):
+            case models.parser.Literal(row, col, value):
                 return value
 
-            case parser.UnaryOp(row, col, op, operand):
+            case models.parser.UnaryOp(row, col, op, operand):
                 value = self.evaluate(operand)
 
                 match op:
@@ -19,11 +15,11 @@ class Evaluator:
                         return -value
 
                     case _:
-                        raise EvaluatorError(
+                        raise models.evaluator.EvaluatorError(
                             f"Unsupported unary operator at line {row}, column {col}: {op}"
                         )
 
-            case parser.BinaryOp(row, col, left, op, right):
+            case models.parser.BinaryOp(row, col, left, op, right):
                 left_value = self.evaluate(left)
                 right_value = self.evaluate(right)
 
@@ -39,17 +35,17 @@ class Evaluator:
 
                     case "/":
                         if right_value == 0:
-                            raise EvaluatorError(
+                            raise models.evaluator.EvaluatorError(
                                 f"Division by 0 at line {row}, column {col}"
                             )
                         return left_value / right_value
 
                     case _:
-                        raise EvaluatorError(
+                        raise models.evaluator.EvaluatorError(
                             f"Unsupported binary operator at line {row}, column {col}: {op}"
                         )
 
             case _:
-                raise EvaluatorError(
+                raise models.evaluator.EvaluatorError(
                     f"Unsupported expression: {type(expression).__name__}"
                 )
